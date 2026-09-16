@@ -50,6 +50,10 @@ def clip(text, n):
     return text if len(text) <= n else text[:n - 1] + '…'
 
 
+def as_qty(v):
+    return int(v) if isinstance(v, float) and v.is_integer() else v
+
+
 def clean_part(part):
     return re.sub(r'^[#\s]+|[\s,.;:]+$', '', part or '')
 
@@ -125,10 +129,11 @@ def cmd_pull(args):
         items.append({
             'line': n, 'printed_line': str(l.get('line')) if l.get('line') is not None else None,
             'portal_key': l['key'], 'source_document': l.get('source_file') or 'manual entry',
-            'item_id': l.get('item_id'), 'quantity': int(l['qty']) if isinstance(l.get('qty'), float) and l['qty'].is_integer() else l.get('qty'), 'unit': l.get('uom'), 'pages': [],
+            'item_id': l.get('item_id'), 'quantity': as_qty(l.get('qty_requested') if l.get('qty_adjusted') else l.get('qty')), 'unit': l.get('uom'), 'pages': [],
             'description': l.get('description') or '',
             'acceptable': [' '.join(filter(None, [o.get('manufacturer'), clean_part(o.get('part'))])) + (f" ({o['description']})" if o.get('description') else '') for o in options],
-            'rfq_notes': (l.get('details') or '').strip() or None,
+            'rfq_notes': ' '.join(filter(None, [(l.get('details') or '').strip(),
+                                                f"Riley is quoting {as_qty(l['qty'])} {l.get('uom') or ''}".strip() + '.' if l.get('qty_adjusted') else ''])) or None,
             'search_terms': terms, 'search_match': 'any',
             'selected': None, 'status': '', 'alternatives': [], 'assessment': '',
         })
