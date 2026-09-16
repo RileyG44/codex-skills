@@ -1,4 +1,4 @@
 interface:
   display_name: "PUD RFQ History Report"
-  short_description: "Research RFQ items and deliver a sourced PDF report"
-  default_prompt: "Use $pud-rfq-history-report to research the provided RFQ against our purchase history and deliver the standardized PDF."
+  short_description: "Research portal RFQ lines against purchase history and deliver a sourced PDF"
+  default_prompt: "Use $pud-rfq-history-report to research the next Grant PUD order that needs RFQ research on the order portal, deliver the standardized PDF, and push the recommendations back to the dashboard."
